@@ -1,0 +1,28 @@
+* Four simple rules to follow making good designs -
+** Runs all tests.
+** Contains no duplication - refactoring
+** Expresses the intent of the programmer.
+** Minimizes the number of classes and methods.
+
+=== Run all tests
+* System should be testable and verifiable.
+
+==== Duplication
+* Duplication is the primary enemy of well designed systems.
+** We could use a boolean for isEmpty and size for the counter.
+[source ,java]
+int size() {
+    return this.size;
+}
+boolean isEmpty() {
+    return this.empty;
+}
+
+** Or we can implement both using just the size.
+[source, java]
+int size() {
+    return this.size;
+}
+boolean isEmpty() {
+    return this.size == 0;
+}

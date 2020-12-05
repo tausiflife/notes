@@ -1,0 +1,32 @@
+* Myths of concurrency -
+** Concurrency always improves performance.
+** Design does not change when writing concurrent programs.
+** Understanding concurrency issues is not important when working with a container such as a Web or EJB container.
+
+* Balanced concerns while writing concurrent software -
+** Concurrency incurs some overhead, both in performance as well as writing additional code.
+** Correct concurrency is complex, even for simple problems.
+** Concurrency bugs aren’t usually repeatable, so they are often ignored as one-offs2 instead of the true defects they
+are.
+** Concurrency often requires a fundamental change in design strategy.
+
+* Recommendations for concurrency -
+** Keep your concurrency-related code separate from other code.
+** Take data encapsulation to heart; severely limit the access of any data that may be shared.
+** Copies of data can be used, but that will cost extra for object creation, however the savings in avoiding intrinsic
+locks will likely makeup.
+** Consider writing your threaded code such that each thread exists in its own world, sharing no data with any other
+thread. This makes each of those threads behave as if it were the only thread in the world and there were no
+synchronization requirements.
+** Review the classes available to you. In the case of Java, become familiar with java.util.concurrent,
+java.util.concurrent.atomic, java.util.concurrent.locks.
+[source, java]
+// A lock that can be acquired in one method and released in another.
+ReentrantLock.java
+// An implementation of the classic semaphore, a lock with a count.
+Semaphore.java
+/* A lock that waits for a number of events before releasing all threads waiting on it. This allows all threads to have
+a fair chance of starting at about the same time.*/
+CountDownLatch.java
+
+** Avoid using more than one method on a shared object.

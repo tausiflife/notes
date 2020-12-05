@@ -7,3 +7,41 @@
 
 * Have a *_concise name_* of the class. More ambiguous the name more likely that it has too many responsibilities.
 Avoid names like _Processor_, _Manager_, _Super_ in the class.
+* Classes are measured with responsibilities like functions are measured with lines.
+* If you cannot derive a concise name of the class, then it is likely too large.
+* Should be able to describe class in 25 words without using *_if_*, *_and_*,*_or_*, *_but_*.
+* Single responsibility of a class. Try to identify reasons to change.
+* *_Cohesion_* : The more variables a method manipulates, the more cohesive the method is to its class.
+
+[source, java]
+public class Stack {
+    private int topOfStack = 0;
+    List<Integer> elements = new LinkedList<Integer>();
+    public int size() {
+        return topOfStack;
+    }
+    public void push(int element) {
+        topOfStack++;
+        elements.add(element);
+    }
+    public int pop() throws PoppedWhenEmpty {
+        if (topOfStack == 0) {
+            throw new PoppedWhenEmpty();
+        }
+        int element = elements.get(--topOfStack);
+        elements.remove(topOfStack);
+        return element;
+    }
+}
+
+* Maintaining *_cohesion_* results in *_many small classes_*.
+* If you want to extract a part oof large function into another function and the code you want to extract uses four of the
+variables declared in the function. You shouldn't pass all the variables as arguments, instead use those variables as
+instance variables and then you can extract without passing any arguments.
+* When you create more and more instance variables that are used by few function, the class loses its cohesion. So when
+class loses its cohesion, split them.
+* By *_minimizing coupling_*, we adhere to *_Dependency Inversion Principle_*, which says classes should depend upon
+abstraction, not on concrete details.
+
+
+
