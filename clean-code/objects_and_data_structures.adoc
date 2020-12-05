@@ -1,0 +1,19 @@
+* Try _not_ to _expose details_ of your data, rather _express_ it  in _abstract terms_. Merely adding interface or/and
+getters and setters is not good.
+* *_Objects hide_* their *_data_* behind *_abstractions_* and *_expose functions_* that operate on that data. *_Data
+structure expose_* their *_data_* and have *_no meaningful functions_*.
+* *_Law of Demeter_* says that a *_method f_* of a *_class C_* should only call the methods of these:
+** C
+** An object created by f
+** An object passed as an argument to f
+** An object held in an instance variable of C
+** The below code violates the law
+[source, java]
+final String outputDir = ctxt.getOptions().getScratchDir().getAbsolutePath();
+
+** However this code doesn't
+[source, java]
+Options opts = ctxt.getOptions();
+File scratchDir = opts.getScratchDir();
+final String outputDir = scratchDir.getAbsolutePath();
+final String outputDir = scratchDir.getAbsolutePath();

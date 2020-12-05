@@ -1,0 +1,19 @@
+= Notes from Clean Code by Robert C. Martin
+
+== Meaningful Names
+include::meaningful_names.adoc[]
+
+== Functions
+include::functions.adoc[]
+
+== Objects and Data structures
+include::objects_and_data_structures.adoc[]
+
+== Error handling
+include::error_handling.adoc[]
+
+== Unit tests
+include::unit_tests.adoc[]
+
+== Classes
+include::classes.adoc[]

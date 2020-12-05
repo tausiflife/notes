@@ -1,0 +1,9 @@
+* A class should begin with a list of variables.
+** Public static constants, if any, should come first.
+** Then private static variables,
+** followed by private instance variables.
+** Public functions should follow the list of variables.
+** Put the private utilities called by a public function right after the public function itself.
+
+* Have a *_concise name_* of the class. More ambiguous the name more likely that it has too many responsibilities.
+Avoid names like _Processor_, _Manager_, _Super_ in the class.

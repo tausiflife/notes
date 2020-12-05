@@ -1,0 +1,12 @@
+* The names of variables, functions, class should tell you *why* it exists, *what* is does and *why* is it used.
+* It is not sufficient to add number series or noise words. If the names must be different they must mean something
+different. eg. a1,a2 or if you have a _Product_ class and another _ProductInfo_ or _ProductData_ class, info and data
+are noise.
+* Use *_pronounceable_* names.
+* Use *_searchable_* names.
+* *_Class and objects_* should have *_noun or noun phrase_* like names. Avoid words like _manager_, _processor_, _data_, _info_
+in class names.
+* *_Method names_* should have *_verbs or verb phrase_* as name.
+* Pick *_one word for one abstract concept_*. For eg. its confusing to have _fetch_, _retrieve_, _get_ as equivalent methods
+of different class.
+* If names aren't meaningful, you can add *_context_* around it, e.g _addrFirstName_ instead of firstName.

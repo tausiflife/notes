@@ -1,0 +1,12 @@
+* The tests and the production code are written together, with the tests just a few seconds ahead of the production code.
+
+* Use the *_BUILD-OPERATE-CHECK_* pattern.
+
+* Every test function in a JUnit test should have *_one and only one assert_* statement.
+
+* Clean tests follow five other rules: *_F.I.R.S.T_*
+** __F__ast - run fast
+** __I__ndependent - not dependent on any other test
+** __R__epeatable - repeatable in any environment.
+** __S__elf validating - boolean output, they either pass or fail
+** __T__imely - should be written just before the production code.

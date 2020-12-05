@@ -1,0 +1,89 @@
+* Try to write tests that force exceptions, and then add behavior to your handler to satisfy your tests. This will
+cause you to build the transaction scope of the try block first and will help you maintain the transaction nature of
+that scope.
+** Not a good code
+[source, java]
+public List<RecordedGrip> retrieveSection(String sectionName) {
+try {
+    FileInputStream stream = new FileInputStream(sectionName);
+} catch (Exception e) {
+    throw new StorageException("retrieval error", e);
+}
+return new ArrayList<RecordedGrip>();
+}
+
+** Good code
+[source, java]
+public List<RecordedGrip> retrieveSection(String sectionName) {
+try {
+    FileInputStream stream = new FileInputStream(sectionName);
+    stream.close();
+} catch (FileNotFoundException e) {
+    throw new StorageException("retrieval error", e);
+}
+return new ArrayList<RecordedGrip>();
+}
+
+* *_Checked exceptions violate Open/Closed Principle_*. If you throw a checked exception from a method
+in your code and the catch is three levels above, you must declare that exception in the signature of each method
+between you and the catch. This means that a change at a low level of the software can force signature changes on many
+higher levels. The changed modules must be rebuilt and redeployed, even though nothing they care about changed.
+
+* Wrapping third-party APIs is a best practice. When you wrap a third-party API, you minimize your dependencies
+upon it. You can choose to move to a different library in the future without much penalty.
+
+* Wrapping also makes it easier to mock out third-party calls when you are testing your own code.
+* With wrapping, you aren't tied to a particular vendor’s API design choices. You can define an API that you feel
+comfortable with.
+
+** Dependency on external API
+[source, java]
+ACMEPort port = new ACMEPort(12);
+try {
+    port.open();
+} catch (DeviceResponseException e) {
+    reportPortError(e);
+    logger.log("Device response exception", e);
+} catch (ATM1212UnlockedException e) {
+    reportPortError(e);
+    logger.log("Unlock exception", e);
+} catch (GMXError e) {
+    reportPortError(e);
+    logger.log("Device response exception");
+} finally {
+}
+
+** Your choice
+[source, java]
+LocalPort port = new LocalPort(12);
+try {
+    port.open();
+} catch (PortDeviceFailure e) {
+    reportError(e);
+    logger.log(e.getMessage(), e);
+} finally {
+...
+}
+public class LocalPort {
+    private ACMEPort innerPort;
+    public LocalPort(int portNumber) {
+        innerPort = new ACMEPort(portNumber);
+    }
+    public void open() {
+        try {
+            innerPort.open();
+        } catch (DeviceResponseException e) {
+            throw new PortDeviceFailure(e);
+        } catch (ATM1212UnlockedException e) {
+            throw new PortDeviceFailure(e);
+        } catch (GMXError e) {
+            throw new PortDeviceFailure(e);
+        }
+    }
+}
+
+* Don't return *_null_* objects. If you are tempted to return null from a method, consider throwing an exception or
+returning a SPECIAL CASE object instead.
+
+* If you are calling a null-returning method from a third-party API, consider wrapping that method with a method that
+either throws an exception or returns a special case object.

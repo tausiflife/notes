@@ -1,0 +1,32 @@
+* Functions should be as *_small_* as possible.
+* Should *_not_* be large enough to *_hold nested structures_*, and hence *_indent level shouldn't be more than 1 or 2_*.
+* It *_should do one thing_*. How to find if the function is doing one thing -
+** It does only those steps that are one level below the stated name of the function.
+** You shouldn't be able to extract another function that is not a replica or very similar to the implementation.
+** One level of abstraction per function.
+* *_The step down rule_* - All functions should be have smaller function which are at next level of abstraction, so you
+are descending one level of abstraction at a time.
+* When using *_switch statements_*, make sure they are buried deep down *_in a low level class_* and never repeated,
+*_using polymorphism_*.
+* Choose *_good names_* for *_smaller functions_* that do *_one thing_*. Don't be afraid to make long descriptive names.
+* Function arguments :
+** Ideal number of arguments = 1, at most 3.
+** *Monadic functions*: Two very common reasons to pass single argument are -
+*** Asking a question about the argument.
+*** Transforming it into something else and returning it.
+*** Used as an event, with function returning now return value. Instead it uses the argument to change the state of the system.
+*** Flag arguments are bad. They mean that the function is doing more than one thing depending on the flag.
+** *Dyadic functions* : 2 arguments. To be used when ordered components of a single value, natural cohesion and natural ordering.
+* If you have *_side effects_* in the function, those must be *_mentioned in the name_* of the function.
+* *_Output arguments_* should be avoided. If the function must change something, make it change the state of the onwing object.
+* Command and query separation - A function should either do something or answer something. Not both.
+* Prefer *_exception_* to returning *_error codes_*.
+* Extract the *_body_* of *_try and catch_* into *_functions_* of their *_own_*.
+* If *_try_* exists in a function, it should be the *_first word_* and *_nothing_* after *_catch/finally_*.
+* *_Variables_* should be declared as *_close to the usage_* as possible.
+* *_Control variables_* should be declared *_within the loop_* statement.
+* *_Dependent function_* : If one function calls another they should be vertically close with *_caller above callee_*.
+* *_Conceptual affinity_* : Functions should be close which are
+** Calling one another.
+** Using a variable.
+** Group of functions performing similar function.
