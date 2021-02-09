@@ -1,0 +1,4 @@
+= Notes from Effective Java 3rd edition by Joshua Bloch
+
+== Creating and destroying objects
+include::creating_destroying_objects.adoc[]
