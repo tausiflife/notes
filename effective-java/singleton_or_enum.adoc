@@ -1,0 +1,39 @@
+* Two ways to implement this -
+
+** _Singleton with public final field_
+[source, java]
+public class Elvis {
+    public static final Elvis INSTANCE = new Elvis();
+    private Elvis() { ... }
+    public void leaveTheBuilding() { ... }
+}
+
+*** Advantage - Exactly one instance is created once the class is initialized. Reflection can be used, but you can modify constructor to throw an exception if it asks to create second instance.
+
+** _Singleton with static factory_
+[source, java]
+public class Elvis {
+    private static final Elvis INSTANCE = new Elvis();
+    private Elvis() { ... }
+    public static Elvis getInstance() {
+        return INSTANCE;
+    }
+    public void leaveTheBuilding() { ... }
+}
+
+*** Advantage - API makes it clear that the class is singleton. Also gives you the flexibility to change your mind.
+
+** _Single element enum_
+[source, java]
+public enum Elvis {
+    INSTANCE;
+    public void leaveTheBuilding() { ... }
+}
+
+*** Advantage
+. Concise
+. Provides serialization for free.
+. Provide guarantee even in case of reflection attack.
+
+*** Disadvantage
+. Can't use this if your singleton must extend a superclass other thatn enum.

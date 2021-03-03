@@ -1,0 +1,222 @@
+* When there are too many parameters, writing a static constructor becomes difficult. There are other ways to do this -
+** *_Telescoping constructor_* -
+. Definition - multiple constructors, one with required parameters, another one with single optional
+parameter, another one with 2 optional parameters and so on.
+[source, java]
+public class NutritionFacts {
+    private final int servingSize; // (mL) required private final int servings; // (per container) required
+    private final int calories;
+    private final int fat;
+    private final int sodium;
+    private final int carbohydrate; // (g/serving) optional
+    public NutritionFacts(int servingSize, int servings) {
+        this(servingSize, servings, 0);
+    }
+    public NutritionFacts(int servingSize, int servings, int calories) {
+        this(servingSize, servings, calories, 0);
+    }
+    public NutritionFacts(int servingSize, int servings, int calories, int fat) {
+        this(servingSize, servings, calories, fat, 0);
+    }
+    // (per serving) optional // (g/serving) optional
+    // (mg/serving) optional
+    public NutritionFacts(int servingSize, int servings, int calories, int fat, int sodium) {
+        this(servingSize, servings, calories, fat, sodium, 0);
+    }
+    public NutritionFacts(int servingSize, int servings, int calories, int fat, int sodium, int carbohydrate) {
+        this.servingSize = servingSize;
+        this.servings
+        this.calories
+        this.fat
+        this.sodium
+        this.carbohydrate = carbohydrate;
+    }
+}
+
+. Limitations -
+*** These *_don't scale well_*.
+*** *_Hard_* to write *_client code_* and *_harder_* to *_read_*. You are left to wonder what those parameters mean as they have to count parameters to find out.
+*** In case you don't want certain parameters, you are still *_forced to pass value_*.
+[source, java]
+NutritionFacts cocaCola = new NutritionFacts(240, 8, 100, 0, 35, 27);
+// zero passed for fat.
+
+*** *_Long sequence of identically_* typed parameters can cause subtle bugs. If client
+accidentally *_reverses the parameters_*, compiler won't complain.
+
+** *_JavaBeans Patter_*
+. Definition - You call a parameterless constructor to create the object and then call series of setter methods to set each required parameter and optional parameter.
+[source, java]
+public class NutritionFacts {
+    // Parameters initialized to default values (if any)
+    private int servingSize = -1; // Required; no default value
+    private int servings
+    private int calories
+    private int fat
+    private int sodium
+    private int carbohydrate = 0;
+    public NutritionFacts() { }
+    // Setters
+    public void setServingSize(int val) {
+        servingSize = val;
+    }
+    public void setServings(int val) {
+        servings = val;
+    }
+    public void setCalories(int val) ...
+    public void setFat(int val) ...
+    public void setSodium(int val) ...
+    public void setCarbohydrate(int val)...
+}
+// client code
+NutritionFacts cocaCola = new NutritionFacts();
+cocaCola.setServingSize(240);
+cocaCola.setServings(8);
+cocaCola.setCalories(100);
+cocaCola.setSodium(35);
+cocaCola.setCarbohydrate(27);
+
+. Advantages -
+*** None of the limitations of telescoping patters.
+*** Easy to read, its bit wordy though.
+
+. Limitations -
+*** The bean may be in an *_inconsistent state_* partway though its construction as the construction is split across multiple calls.
+*** They make is *_impossible_* to create *_immutable classes_*.
+*** *_Thread unsafe_*, required added effort to ensure it.
+
+** *_Builder Pattern_*
+. Definition - Client calls a *_constructor (or static factory)_* with all the required parameters and gets a builder object. Then calls *_setter like method_* on those builder objects to set optional parameters. finally calls *_build method_* to generate the object. This is a good choice when designing classes whose constructors or static factories would have more than a handful of parameters, especially if *_many of the parameters are optional or of identical type_*.
+[source, java]
+public class NutritionFacts {
+    private final int servingSize;
+    private final int servings;
+    private final int calories;
+    private final int fat;
+    private final int sodium;
+    private final int carbohydrate;
+    public static class Builder {
+        //Required parameters
+        private final int servingSize;
+        private final int servings;
+        //Optional parameters - initialized to default values
+        private int calories;
+        private int fat;
+        private int sodium;
+        private int carbohydrate;
+        public Builder(int servingSize, int servings) {
+            this.servingSize = servingSize;
+            this.servings = servings;
+        }
+        public Builder calories(int val) {
+            calories = val;
+            return this;
+        }
+        public Builder fat(int val) {
+            fat = val;
+            return this;
+        }
+        public Builder sodium(int val) {
+            sodium = val;
+            return this;
+        }
+        public Builder carbohydrate(int val) {
+            carbohydrate = val;
+            return this;
+        }
+        public NutritionFacts build() {
+            return new NutritionFacts(this);
+        }
+    }
+    private NutritionFacts(Builder builder) {
+        servingSize = builder.servingSize;
+        servings = builder.servings;
+        calories = builder.calories;
+        fat = builder.fat;
+        sodium = builder.sodium;
+        carbohydrate = builder.carbohydrate;
+    }
+}
+// client code
+NutritionFacts cocaCola = new NutritionFacts.Builder(240, 8) .calories(100).sodium(35).carbohydrate(27).build();
+
+. Advantages -
+*** Client code is *_easy to write and read_*.
+*** Parameter invalidity can be checked in builders constructor and methods.
+*** Builders can have multiple varargs parameters because each one is specified in its own method.
+*** The parameters can be tweaked in between invocations of the build method to vary.
+*** Builder can fill in some fields automatically upon object creation.
+*** Invariants involving multiple parameters in the constructor invoked by build method and throw IllegalArgumentException.
+*** The Builder pattern is well suited to class hierarchies.
+[source, java]
+public abstract classs Pizza {
+    public enum Topping {
+        HAM, MUSHROOM, ONION, PEPPER, SAUSAGE;
+    }
+    final Set<Topping> toppings;
+    abstract static class Builder<T extends Builder<T>> {
+        EnumSet<Toppings> toppings = EnumSet.noneOf(Toppings.class);
+        public T addTopping(Topping, topping) {
+            toppings.add(Objects.requireNonNull(topping));
+            return self;
+        }
+        abstract Pizza build();
+        abstract T self();
+    }
+    Pizza(Builder<?> builder) {
+        toppings = builder.toppings.clone();
+    }
+}
+public class NyPizza extends Pizza {
+    public enum Size {
+        SMALL, MEDIUM, LARGE;
+    }
+    public final Size size;
+    public static class Builder extends Pizza.Builder<Builder> {
+        private final Size size;
+        public Builder(Size size) {
+            this.size = Objects.requireNonNull(size);
+        }
+        @override
+        public NyPizza build() {
+            return new NyPizza(this);
+        }
+        @override
+        protected Builder self() {
+            return this;
+        }
+    }
+    private NyPizza(Builder builder) {
+        super(builder);
+        size = builder.size;
+    }
+}
+public class Calzone extends Pizza {
+    private boolean sauceInside = false;
+    public static class Builder extends Pizza.Builder<Builder> {
+        private final boolean sauceInside = false;
+        public Builder sauceInside() {
+            sauceInside = true;
+            return this;
+        }
+        @override
+        public Calzone build() {
+            return new Calzone(this);
+        }
+        @override
+        protected Builder self() {
+            return this;
+        }
+    }
+    private Calzone(Builder builder) {
+        super(builder);
+        sauceInside = builder.sauceInside;
+    }
+}
+//client code
+NyPizza pizza = new NyPizza.Builder(SMALL).addToppings(SAUSAGE).addToppings(ONION).build();
+Calzone calzone = new Calzone.Builder().addToppings(HAM).sauceInside().build();
+
+. Disadvantages
+*** In order to create an object, you have to create a builder. Cost is small but can be a problem in performance critical applications.
+*** Should only be used if there are enough parameters say four or more.

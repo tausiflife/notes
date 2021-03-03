@@ -1,44 +1,8 @@
 .Consider public static method instead of constructors.
-** Unlike constructors *_static factory methods have names_*.  If the parameters to a constructor do not, in and of themselves,
-describe the object being returned, a static factory with a *_well-chosen name is easier to use_* and the resulting client
-code easier to read.
-+
-[source, java]
-BigInteger(int, int, Random); //probably returns prime
-BigInteger.probablePrime(int, int, Random) //method names indicate that it returns prime.
+include::public_static_methods.adoc[]
 
-*** Its really a *_bad idea_* to have *_constructors with different parameters_* because user might not remember which constructor
-is which and end up calling the wrong constructor.
+.Consider a builder
+include::builder_methods.adoc[]
 
-** Unlike constructors, they are *_not required to create a new object each time_* they’re invoked. This allows -
-. *_immutable_* class.
-. *_cache_* instances as they’re constructed.
-. Dispense them repeatedly to *_avoid_* creating *_unnecessary duplicate_* objects.
-. Maintain strict control over what instances exist at any time.
-+
-[source, java]
-Boolean.valueOf(boolean); //it never creates an object.
-
-** Unlike constructors, they can *_return_* an object of *_any subtype of their return type_*.
-*** Gives the flexibility to return objects without making their class public.
-*** Nearly all of these implementations are exported via static factory methods in one non-instantiable class
-+
-[source, java]
-java.util.Collections; //The classes of the returned objects are all nonpublic.
-
-*** Java 8 provided ability to add static and default methods in interfaces.
-**** Default methods - new functionality to existing interface without breaking previous versions.
-**** Static methods - helper methods to your library, you can keep static methods specific to an interface in the same
-interface rather than in a separate class.
-
-** Unlike constructors, static factories can return class of the returned object that can vary from call to call as a
-function of the input parameters. Future release can add more implementation and clients don't have to know or change.
-[source, java]
-import java.util.EnumSet;
-//This has no public constructor, only static factories, that depending on the size of the enum, returns either
-import java.util.RegularEnumSet;
-//or
-import java.util.JumboEnumSet;
-
-** Unlike constructors, in static factories the class of the returned object need not exist when the class containing
-the method is written.
+.Enforcing singleton property or an enum
+include::singleton_or_enum.adoc[]
