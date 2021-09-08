@@ -214,7 +214,8 @@ public class Calzone extends Pizza {
     }
 }
 //client code
-NyPizza pizza = new NyPizza.Builder(SMALL).addToppings(SAUSAGE).addToppings(ONION).build();
+NyPizza pizza = new NyPizza.Builder(SMALL).addToppings(SAUSAGE)
+                            .addToppings(ONION).build();
 Calzone calzone = new Calzone.Builder().addToppings(HAM).sauceInside().build();
 
 . Disadvantages

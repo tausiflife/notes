@@ -6,3 +6,12 @@ include::builder_methods.adoc[]
 
 .Enforcing singleton property or an enum
 include::singleton_or_enum.adoc[]
+
+.Enforcing non instantiability with a private constructor
+include::private_constructor.adoc[]
+
+.Prefer Dependency injection to hard wire resources
+include::dependency_injection.adoc[]
+
+.Destroying objects
+include::destroying_objects.adoc[]

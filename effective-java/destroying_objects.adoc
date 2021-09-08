@@ -1,0 +1,56 @@
+* Nulling out reference should be the exception rather than the norm as it creates a lot of clutter. Can be done by *_declaring variables in narrowest possible scope_*.
+
+* When a *_class_* manages it *_own memory_*, the programmer should be *_alert_* for *_memory leak_*.
+
+* Caches can also cause memory leaks if they are not cleansed. You can use background threads to do this.
+
+* Listeners and callbacks
+
+* Finalizers are unpredictable and often dangerous and generally unnecessary. CLeaners are less dangerous but still are unpredictable and generally unnecessary.
+
+* Never do anything time critical in a finalizer or cleaner like closing open files.
+
+* Never depend on a finalizer or cleaner ro update persistent state like using it to release a lock on database resource.
+
+* Final class are immune to finalizer attack. Non-final classes can be protected by
+** finalize method.
+** Have your class implement *_autocloseable_*.
+** _IMP_ : Instance must keep track of whether it has been closed. _close_ method must record in a field that the object is no longer valid and other methods much check this field and throw *_IllegalStateException_* if they are called after object has been closed.
+
+[source, java]
+public class Room implements AutoCloseable {
+    private static final Cleaner cleaner = Cleaner.create();
+    ///An autocloseable class using a cleaner as a safety net
+    //Resource that requires cleaning. Must not refer to Room!
+    private static class State implements Runnable {
+        int numJunkPiles;
+        State(int numJunkPiles) {
+            this.numJunkPiles =  numJunkPiles;
+        }
+        @override
+        public void run() {
+            System.out.println("Cleaning room");
+            numJunkPiles = 0;
+        }
+    }
+    private final State state;
+    private final Cleaner.Cleanable cleanable;
+    public Room(int numJunkPiles) {
+        state = new State(numJunkPiles);
+        cleanable = cleaner.register(this, state);
+    }
+    @override
+    public void close() {
+        cleanable.clean();
+    }
+}
+// good client
+public class Adult {
+    public static void main(String[] args) {
+        try (Room myroom = new Room(7)) {
+            Sys
+        }
+    }
+}
+
+* Prefer try with resource to try-finally

@@ -1,0 +1,33 @@
+* Valid use case for class with *_static methods_* and *_static fields_*
+. Can be used to *_group_* related *_methods on primitive values or arrays_* like
+[source, java]
+import java.lang.Math;
+import java.lang.Arrays;
+
+. This can be used to *_group methods_* on the final class, since you can't add them in a subclass.
+
+* This kind of classes should never be initialized as it doesn't make any sense. Do not make it abstract to avoid instantiation, as the class can be subclassed and initiated.
+
+* To avoid instantiation make the constructor private.
+
+* Invalid use -
+[source, java]
+public class SpellChecker {
+    private static final Lexicon dictionary = ... ;
+    private SpellChecker() {
+        ... // Not instantiable
+    }
+    public static boolean isValid(String word) { ... }
+    public static List<String> suggestions(String typo) { ... }
+}
+
+[source, java]
+public class UtilityClass {
+    //suppress default constructor provided by jvm
+    private UtilityClass() {
+        throw new AssertionError(); // This guarantees that the class will never be instantiated.
+    }
+    ...
+}
+
+* Static utility classes and singletons are inappropriate for classes whose behaviour is parameterized by an underlying resource.

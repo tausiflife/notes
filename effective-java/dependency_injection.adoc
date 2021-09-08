@@ -1,0 +1,38 @@
+* A useful vairant of this pattern is to pass a resource factory to the constructor such as -
+[source, java]
+Mosaic create(Supplier<? extends Tile> tileFactory) { ... }
+
+* Do not use singleton or static utility class to implement a class that depends on one or more underlying resources whose behavior affects of that of the class.
+
+* Avoid creating unnecessary objects.
+[source, java]
+String hello = new String("Hello"); // creates two instances and is not reused
+String hello = "hello";
+
+** Creating multiple instance of views like *_keyset method_* in *_Map interface_*.
+** Autoboxing blurs but does not erase the distinction between primitive and boxed primitive types. Prefer primitive to boxed primitives.
+[source, java]
+private static long sum() {
+    Long sum = 0L;
+    for (long i = 0; i <= Integer.MAX_VALUE; i++)
+        sum += i;
+    return sum;
+}
+// The above program constructs unnecessary Long instances. Converting it to long, improves prerformance.
+
+** Maintaining your own object pool is a bad idea unless the objects in the pool are
+extremely heavyweight like database connections.
+
+** The cost of reusing an object is far more greater than the cost of creating a duplicate object.
+
+* Avoid using *_string.matches(pattern)_*. As internally it creates a pattern object and then its eligible for garbage collection. Creating pattern object is a expensive operation as requires compiling regular expression into finite state machine.
+[source, java]
+static boolean isRomanNumeral(String s) {
+    return s.matches("^(?=.)M*(C[MD]|D?C{0,3})(X[CL]|L?X{0,3}) (I[XV]|V?I{0,3})");
+}
+// instead use this
+private static final Pattern ROMAN = Pattern.compile("^(?=.)M*(C[MD]|D?C{0,3})(X[CL]|L?X{0,3}) (I[XV]|V?I{0,3})");
+static boolean isRomanNumeral(String s) {
+    return ROMAN.matcher(s).matches();
+}
+
