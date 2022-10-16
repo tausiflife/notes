@@ -1,0 +1,10 @@
+* Distribute data across multiple machines because
+** scalability
+** fault tolerance
+** latency
+
+* There are two common ways data is distributed across multiple nodes -
+
+include::replication.adoc[]
+include::partitioning.adoc[]
+include::interesting_use_case.adoc[]

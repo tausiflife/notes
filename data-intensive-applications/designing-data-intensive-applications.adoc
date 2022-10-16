@@ -1,0 +1,10 @@
+= Notes from designing data intensive application by Martin Kleppman.
+
+== Foundation of data systems
+include::foundation_of_data_systems.adoc[]
+
+== Distributed data
+include::distributed_data.adoc[]
+
+== Derived data
+include::derived_data.adoc[]
