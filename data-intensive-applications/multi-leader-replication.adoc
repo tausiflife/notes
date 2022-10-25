@@ -6,7 +6,7 @@
 ** Use cases -
 *** _##Multi datacenter operation##_ - because you need less latency and tolerate failure.
 1. So each datacenter has a leader and within datacenter normal follower replication is used.
-2. Between datacenters leader replicates its changes to other leader in other datacenters.
+2. #Between datacenters# leader replicates its changes to other leader in other datacenters.
 +
 image::../images/multi-datacenter-replication.png[]
 +
@@ -46,3 +46,28 @@ image::../images/multi-leader-conflict.png[]
 .. Give #each replica a unique ID#, and a higher number replica take precedence, again prone to loss.
 .. Somehow #merge value# together like order them alphabetically and then concatenate them
 .. Use an #explicit data structure# that saves all information, and write #application# code that #resolves the conflict#.
+This can be done at the time of write(no user prompt) or read(with user prompt). Ways to automatically resolve conflict caused by concurrent modifications -
+... CRDT - conflict free replicated data types : 2 way merge. Sets, list, counters.
+... Mergeable persistent data structures - tracks history and user 3-way merge.
+
+*** Multi leader replication topology
++
+.Multi leader replication topology
+image::../images/multi-leader-replication-topology[]
++
+
+|====
+|Circular topology |Star topology |All-to-all topology
+
+|One node failure can interrupt the flow.
+|One node failure can interrupt the flow.
+|One node failure is tolerable as it allows messages to travel along different paths.
+
+|Problem of casuality does not occur.
+|Problem of casuality does not occur.
+|leaders may receive updates in different order.
+
+
+|====
+
+

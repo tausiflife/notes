@@ -1,2 +1,12 @@
+### **Replication**
 include::single-leader-replication.adoc[]
 include::multi-leader-replication.adoc[]
+include::leaderless-replication.adoc[]
+
+#### Comparing guarantee with CAP
+
+.Read guarantee with CAP
+image::../images/guarantee-cap.png[]
+
+** _Monitoring staleness_
+*** It is important to monitor the health of your replication. For leader-based replication, you can #monitor replication log# of leader and subtract follower replication log to get a measure the amount of replication lag.

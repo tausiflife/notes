@@ -1,5 +1,3 @@
-### **Replication**
-
 ** If the data that needs to be migrated doesn't change, then easy to replicate as the data can be easily copied.
 
 ** Challenges arrive when the data being replicated changes.
@@ -23,7 +21,8 @@ There are three algorithm for replicating changes between the nodes -
 1. followers always up to date with leader.
 2. if the leader dies, data is still available in followers.
 *** Disadvantage -
-1. if the follower doesn't respond, write cannot be processed.
+. if the follower doesn't respond, write cannot be processed.
+. Latency increases with number of followers.
 - *asynchronous* - leader sends the message to client and doesn't wait for follower.
 *** Advantages -
 1. leader continues to write even if all the followers are dead.
