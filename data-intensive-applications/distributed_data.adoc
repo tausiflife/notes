@@ -7,4 +7,6 @@
 
 include::replication.adoc[]
 include::partitioning.adoc[]
-include::interesting_use_case.adoc[]
+//include::interesting_use_case.adoc[]
+
+include::transactions.adoc[]

@@ -1,0 +1,4 @@
+. Indeed, PostgreSQL’s repeatable read, Oracle’s
+serializable, and SQL Server’s snapshot isolation levels automatically detect when a
+lost update has occurred and abort the offending transaction. However, MySQL/
+InnoDB’s repeatable read does not detect lost updates

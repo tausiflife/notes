@@ -29,6 +29,11 @@ There are three algorithm for replicating changes between the nodes -
 *** Disadvantage -
 1. if leader dies, any write that is not replicated is lost.
 
+** Databases that use this -
+*** Relational database - PostgreSQL, MySQL,
+*** Non-relational database - MongoDB, RethinkDB
+*** Message brokers - Kafka, RabbitMQ
+
 ** __Setting up new follower__
 1. Take a #snapshot# of the leader database at some #point in time#.
 2. #copy the snapshot# to the new follower.
@@ -51,14 +56,14 @@ Also if the data is being share with outside storage systems. Refer to incident 
 b. It could happen that 2 nodes both believe that they are the leaders and if both accept writes, data is likely to be lost of corrupted.
 c. What is the right timeout before declaring a leader as dead? Longer time means longer time to recovery and shorter time could lead to unnecessary failovers.
 ** _Implementation of replication log_
-1. Statement based replication - every #crud operation# is #forwarded# to its followers.
+1. #Statement based replication# - every #crud operation# is #forwarded# to its followers.
 *** Problems -
 a. #non-deterministic function# may generate different value on each replica.
 b. if #auto incrementing sequence# is being used, they need to implemented in the same order.
 c. Statements that have side effect like #triggers, functions, stored-procedure# calls may result in different side effects on each replica.
-2. Write ahead log(WAL) shipping - #append only logs# which the leader can send to its followers. #Followers# then can use the #log to rebuild#.
+2. #Write ahead log(WAL)# shipping - #append only logs# which the leader can send to its followers. #Followers# then can use the #log to rebuild#. Used in #Oracle# and #PostgreSQL#.
 *** Problem -
-a. Details are of very low level. If the database #changes its storage format#, it is not possible to different versions of the database software on both leader and follower. You need then downtime to do such upgrades.
+a. Details are of very low level. If the database #changes its storage format# from one version to another, it is not possible to different versions of the database software on both leader and follower. You need then downtime to do such upgrades.
 3. _Logical( row based replication)_ - MySQL bin log. this uses #different log format# for storage and replication, hence it is now #decoupled from storage engine# internals. It basically is sequence of records describing writes to database at row level.
 *** Advantages -
 a. Leader and follower can #run different versions# of the database software or storage engines.
