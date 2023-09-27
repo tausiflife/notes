@@ -1,0 +1,7 @@
+#### Relational model versus document model
+
+For highly
+interconnected data, the document model is awkward, the relational model is acceptable,
+and graph models (see “Graph-Like Data Models” on page 49) are the most
+natural.
+Schema flexibility
