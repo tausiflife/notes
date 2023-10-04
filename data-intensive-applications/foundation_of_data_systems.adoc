@@ -3,3 +3,9 @@ include::reliable_scalable_maintainable_applications.adoc[]
 
 === Data Models and Query Languages
 include::data_models_and_query_languages.adoc[]
+
+=== Storage and retrieval
+include::storage_and_retrieval.adoc[]
+
+=== Encoding and evolution
+include::encoding_and_evolution.adoc[]

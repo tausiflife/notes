@@ -1,4 +1,4 @@
-=== **Partitioning AKA Sharding**
+
 
 . Breaking of large database down into smaller ones for scalability.
 . Spread the data and query load evenly across nodes, so in theory 10 nodes should be able to handle 10 times as much data and 10 times read and write throughput.

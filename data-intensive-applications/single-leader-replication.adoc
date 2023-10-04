@@ -1,11 +1,3 @@
-** If the data that needs to be migrated doesn't change, then easy to replicate as the data can be easily copied.
-
-** Challenges arrive when the data being replicated changes.
-There are three algorithm for replicating changes between the nodes -
-
-. single leader
-. multi leader
-. leaderless
 
 #### Single leader replication
 ** Each node stores a copy of the data, called as replica.
@@ -29,6 +21,12 @@ There are three algorithm for replicating changes between the nodes -
 *** Disadvantage -
 1. if leader dies, any write that is not replicated is lost.
 
+- *semi-synchronous* - Not all the followers are synchronous. Atleast one is synchronous.
+*** Advantages -
+1. This guarantees that you have an up-to-date copy of the data on at least two nodes:
+the leader and one synchronous follower.
+2. If the synchronous follower becomes unavailable or slow, one of the asynchronous followers is made synchronous
+
 ** Databases that use this -
 *** Relational database - PostgreSQL, MySQL,
 *** Non-relational database - MongoDB, RethinkDB
@@ -43,12 +41,18 @@ So the snapshot is associated with an exact position in the log, known as #log s
 
 ** Systems can go down, so how to we achieve high availability in leader based replication?
 1. _Follower failure - catch-up recovery_
-*** If it crashes, it can be restarted.
-*** If there is some network issue, the follower can connect with leader to find all the data changes that happened since it was done and can do the catch-up.
+*** Since each follower keeps the log of data changes that it has received from leader,
+If it crashes, or is restarted or the network between leader and follower is temporarily disconnected, the follower can
+recover quickly from its log.
+*** If there is some network issue, the follower can connect with leader to find all the data changes that happened
+since it was done and can do the catch-up.
 2. _Leader failover - Failover_
-*** Determining that the leader is dead.
-*** Choosing a new leader.
+*** Determining that the leader is dead - Use timeout, if a node doesn’t respond for some period of time—say,
+30 seconds—it is assumed to be dead.
+*** Choosing a new leader - Gettin all nodes to agree on a leader using consensus.
 *** Reconfiguring the system to use a new leader.
+*** Clients needs to be reconfigured to send their writes to a new leader.
+
 **** Problems with this kind of failover -
 a. if async is used, new leader might not have all the writes from the old leader that died.
 If the former leader joins, what should happen to those writes? One option is to discard the data which may violate the client durability expectations.
@@ -64,12 +68,15 @@ c. Statements that have side effect like #triggers, functions, stored-procedure#
 2. #Write ahead log(WAL)# shipping - #append only logs# which the leader can send to its followers. #Followers# then can use the #log to rebuild#. Used in #Oracle# and #PostgreSQL#.
 *** Problem -
 a. Details are of very low level. If the database #changes its storage format# from one version to another, it is not possible to different versions of the database software on both leader and follower. You need then downtime to do such upgrades.
-3. _Logical( row based replication)_ - MySQL bin log. this uses #different log format# for storage and replication, hence it is now #decoupled from storage engine# internals. It basically is sequence of records describing writes to database at row level.
+3. _Logical( row based replication)_ - MySQL bin log. this uses #different log format# for storage and replication,
+hence it is now #decoupled from storage engine# internals.
+It basically is sequence of records describing writes to database at row level.
 *** Advantages -
 a. Leader and follower can #run different versions# of the database software or storage engines.
 b. It is easier for an #external application for parse# the data like data-warehouse.
 
-4. _Trigger based replication_- Oracle golden gate. Custom #application code# that is #automatically executed# when the data changes. It has greater overhead but is nevertheless useful due to flexibility.
+4. _Trigger based replication_- Oracle golden gate. Custom #application code# that is #automatically executed#
+when the data changes. It has greater overhead but is nevertheless useful due to flexibility.
 ** _Problems of replication logs_ -
 ***  #Read scaling# architecture where in you can #increase the read capacity# for serving read-only requests simply by #adding more followers#. If you tried this with #sync replicate#, a #single node failure# can bring the whole #system down#. And the #more followers# you have the #likelihood# of that increases.
 

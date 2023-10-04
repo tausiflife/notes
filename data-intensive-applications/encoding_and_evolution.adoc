@@ -1,0 +1,31 @@
+. Most of the applications both old and new versions of the code, and old and new data formats,
+may potentially all coexist in the system at the same time. In order for the system to
+continue running smoothly, we need to maintain compatibility in both directions:
+.. __Backward compatibility__
+... Newer code can read data that was written by older code.
+.. __Forward compatibility__
+... Older code can read data that was written by newer code
+
+==== Formats of encoding data
+. __Encoding__
+.. The translation from the in-memory representation to a byte sequence is called encoding
+(also known as __serialization or marshalling__)
+. __ Decoding__
+.. The translation from the byte sequence to in-memory representation
+
+. Why is it a bad idea to use language specific built-in encoding?
+a. Encoding is often tied to a particular programming language, reading data in any other
+language is difficult.
+b. In order to restore data in the same object types, the decoding process needs to
+be able to instantiate arbitrary classes. This is frequently a source of security
+problems
+c. Versioning data is often an afterthought in these libraries
+d. Efficiency (CPU time taken to encode or decode, and the size of the encoded
+structure) is also often an afterthought
+. Example JSON
+[source, json]
+{
+"userName": "Martin",
+"favoriteNumber": 1337,
+"interests": ["daydreaming", "hacking"]
+}
