@@ -1,7 +1,9 @@
-
+**** Partitions are defined in such a way that each piece of data (each record,
+row, or document) belongs to exactly one partition
 
 . Breaking of large database down into smaller ones for scalability.
-. Spread the data and query load evenly across nodes, so in theory 10 nodes should be able to handle 10 times as much data and 10 times read and write throughput.
+. Spread the data and query load evenly across nodes, so in theory 10 nodes
+should be able to handle 10 times as much data and 10 times read and write throughput.
 . #Skewed partition#  Some partitions have mode data and queries.
 . #Hot spot# - A partition with disproportionately high load.
 .. Simple solution for hot spots -
@@ -12,7 +14,8 @@ Problem:: You can't know which record went to which node and hence you have to q
 .. _By key range_-
 Pros::
 ... Assign continuous range of keys to each partition.
-... Within each partition keep the #keys in sorted order# so that #range scans are easy# and keys can be treated as concatenated index to fetch several related records.
+... Within each partition keep the #keys in sorted order# so that #range scans are
+easy# and keys can be treated as concatenated index to fetch several related records.
 Cons::
 ... Certain access patterns can lead to hot spots.
 
@@ -24,20 +27,31 @@ Pros::
 ... #Partition# boundaries are #evenly spaced#.
 
 Cons::
-... #Key range search# is #not possible# as keys are distributed based on hash. Any key range search needs to send to all partitions.
-... Reduces hotspots but to an extent. In case of social site, where a celebrity has millions of users, an activity can cause this kind of hot spots problems. A solution to this problem-
-.... Use compound partition key with one part and userId and second part a random number between 1-n nodes. So now the hot key is partitioned between n nodes. The problem with this is, for reads you need to repeat it n times for all the partitions. Also, this doesn't need to be done for all user, hence you need to know which keys are being split/appended.
+... #Key range search# is #not possible# as keys are distributed based on hash.
+Any key range search needs to send to all partitions.
+... Reduces hotspots but to an extent. In case of social site,
+where a celebrity has millions of users, an activity can cause this kind of
+hot spots problems. A solution to this problem-
+.... Use compound partition key with one part as userId and second part a
+random number between 1-n nodes. So now the hot key is partitioned between n nodes.
+The problem with this is, for reads you need to repeat it n times for all the partitions.
+Also, this doesn't need to be done for all user, hence you need to know which keys
+are being split/appended.
 
 
 .. _Using compound primary key_ -
-Only the first part of the key is partitioned, and other are used as concatenated index for storing data.
+Only the first part of the key is partitioned, and other are used as concatenated
+index for storing data.
 
 Pros::
-... If you provide #fixed# value of the #first column#, then #efficient range scans# can be done for #rest columns#.
+... If you provide #fixed# value of the #first column#, then #efficient range scans#
+can be done for #rest columns#.
 Cons::
 ... Range search is still not possible for first column.
 Usage::
-... Efficient data models for one-to-many relationship. eg One user post many updates. If you choose primary key as (user_id, update_timestamp), then within user updates are stored ordered by timestamp.
+... Efficient data models for one-to-many relationship. eg One user post many updates.
+If you choose primary key as (user_id, update_timestamp), then within user updates
+are stored ordered by timestamp.
 
 . _Secondary indexes_ -
 .. These can't identify a record uniquely but are rather #used searching occurrences of a particular value#. eg. #All cars whose color is red#, all actions by user 123 etc.

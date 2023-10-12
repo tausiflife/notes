@@ -1,6 +1,9 @@
 
 #### Multi leader replication
-** Downside of leader based replication every write needs to go through single leader. If you #can't connect# to the leader, you #can't write# to the database. So when we want to #allow more than one node to accept the writes#, we need #multi leader replication#. In this each #leader acts as a follower to other leaders#.
+** Downside of leader based replication every write needs to go through single leader.
+If you #can't connect# to the leader, you #can't write# to the database.
+So when we want to #allow more than one node to accept the writes#, we need #multi leader replication#.
+In this each #leader acts as a follower to other leaders#.
 ** Downside is #resolving write conflicts#.
 
 ** Use cases -
@@ -41,12 +44,16 @@ image::../images/multi-leader-conflict.png[]
 . Each #document user# is assigned to a #nearest datacenter#.
 . #Problem# arises when the #user changes location# or the #datacenter# the user was connected to is #dies#.
 *** Converging towards a consistent state -
-. If leader 1 is at x1 and leader 2 at x2, then it is not acceptable. The database must resolve the conflict in a convergent way, meaning all replicas must arrive at the same final value. Ways to achieve this is -
-.. Give #each write a unique ID#, and pick the write with the highest ID. Dangerous as prone to data loss.
+. If leader 1 is at x1 and leader 2 at x2, then it is not acceptable.
+The database must resolve the conflict in a convergent way, meaning all
+replicas must arrive at the same final value. Ways to achieve this is -
+.. Give #each write a unique ID#, and pick the write with the highest ID.
+if a timestamp is used, this technique is known as LWW(__last write wins__). Dangerous as prone to data loss.
 .. Give #each replica a unique ID#, and a higher number replica take precedence, again prone to loss.
 .. Somehow #merge value# together like order them alphabetically and then concatenate them
 .. Use an #explicit data structure# that saves all information, and write #application# code that #resolves the conflict#.
-This can be done at the time of write(no user prompt) or read(with user prompt). Ways to automatically resolve conflict caused by concurrent modifications -
+This can be done at the time of write(no user prompt) or read(with user prompt).
+Ways to automatically resolve conflict caused by concurrent modifications -
 ... CRDT - conflict free replicated data types : 2 way merge. Sets, list, counters.
 ... Mergeable persistent data structures - tracks history and user 3-way merge.
 

@@ -78,15 +78,40 @@ b. It is easier for an #external application for parse# the data like data-wareh
 4. _Trigger based replication_- Oracle golden gate. Custom #application code# that is #automatically executed#
 when the data changes. It has greater overhead but is nevertheless useful due to flexibility.
 ** _Problems of replication logs_ -
-***  #Read scaling# architecture where in you can #increase the read capacity# for serving read-only requests simply by #adding more followers#. If you tried this with #sync replicate#, a #single node failure# can bring the whole #system down#. And the #more followers# you have the #likelihood# of that increases.
+***  #Read scaling# architecture where in you can #increase the read capacity# for serving read-only requests
+simply by #adding more followers#. If you tried this with #sync replicate#, a #single node failure# can bring
+the whole #system down#. And the #more followers# you have the #likelihood# of that increases.
 
-*** If used in #async# way, #outdated information# might still be available in follower as the follower still hasn't caught up with the leader. However this is temporary state hence it known as #eventual consistency#. So this time which the follower take to catch up with the leader is replication lag.
-
-*** #Reading your own write# - AKA #read-after-write# consistency. It is a #guarantee# that the #user# will #always# see #updates# they #submitted themselves#. Ways to achieve this -
+*** If used in #async# way, #outdated information# might still be available in follower as the follower still hasn't caught up with the leader.
+However this is temporary state hence it known as #eventual consistency#.
+So this time which the follower take to catch up with the leader is replication lag.
+*** Problems that are likely to occur when there is replication lag and
+some approaches to solving them.
+**** #Reading your own write# -
++
+image::../images/read_after_write_anomaly.png[]
+AKA #read-after-write# consistency.
+It is a #guarantee# that the #user# will #always# see #updates# they #submitted themselves#. Ways to achieve this -
 1. If a small section of the application is editable by the user, #update by the users can be served by the leader#.
-2. If a big section is editable by the user, reading every user's update from the leader will negate the benefits of read scaling. Here you can define a time, lets say #1 min till which leader will serve those request and then followers will take up#. You also then need to monitor the replication lag of followers to route request only to those followers within 1 min.
-3. When the application is having #multiple datacenters#, then request needs to #routed to the datacenter that has the leader#.
+2. If a big section is editable by the user, reading every user's update from the leader will negate the benefits of read scaling.
+Here you can define a time, lets say #1 min till which leader will serve those request and then followers will take up#.
+You also then need to monitor the replication lag of followers to route request only to those followers within 1 min.
+3. Client can remember the timestamp of the most recent write, then the system can ensure that the replicas that are serving
+the read requests reflect updates atleast untill that timestamp. This fails when the user tries to access from different devices.
+Then the last update metadata needs to be centralized.
+4. When the application is having #multiple datacenters#, then request needs to #routed to the datacenter that has the leader#.
 
-*** #Monotonic reads# - lesser guarantee than strong consistency but stronger guarantee than eventual consistency. This means that if a user makes #several read requests# in sequence like in #page refresh#, they will #not read older data after having previously read newer data#. Ways to achieve this -
+**** #Monotonic reads# -
++
+image::../images/stale-replica.png[]
+lesser guarantee than strong consistency but stronger guarantee than eventual consistency.
+This means that if a user makes #several read requests# in sequence like in #page refresh#,
+they will #not read older data after having previously read newer data#. Ways to achieve this -
 1. User always makes the read from the same replica which can be done using hashing,
-2. If the replica dies, queries need to routed to another replica.
+If the replica dies, queries need to routed to another replica.
+
+**** #Consitent prefix reads# - Gaurantees that if a sequence of writes happens in a certain order,
+then anyone reading those writes will see them appear in the same order.
+1. One solution is to make sure that any writes that are causally related to each other are
+written to the same partition—but in some applications that cannot be done efficiently.
+
